@@ -14,7 +14,7 @@ object Flow1 extends App {
     val debugA: FrameTransformer = DebugOutput()
     grid --> debugA
 
-    val formula: FrameTransformer = Formula("millenial" -> "YEAR(dob) >= 1982".mvel)
+    val formula = Formula("millenial" -> "YEAR(dob) >= 1982".mvel)
     val select = SelectValues() retain ("name", "weight", "millenial")
     val af = AddFields("predictor" -> "")
     val debugB: FrameTransformer = DebugOutput()
