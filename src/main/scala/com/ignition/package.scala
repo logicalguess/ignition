@@ -15,19 +15,21 @@ package object ignition {
 
   /* implicits for connecting tuples of ConnectionSource to a multi-input step */
 
-  implicit class CSource2[T, R <: FlowRuntime](val tuple: Product2[CSrc[T, R], CSrc[T, R]]) extends AnyVal {
+  implicit class CSource2[T, R <: FlowRuntime](val tuple: Product2[_, _]) extends AnyVal {
     def to(tgt: MultiInputStep[T, R]): tgt.type = {
-      tuple._1 to tgt.in(0)
-      tuple._2 to tgt.in(1)
+      tuple._1.asInstanceOf[CSrc[T, R]] to tgt.in(0)
+      tuple._2.asInstanceOf[CSrc[T, R]] to tgt.in(1)
       tgt
     }
     def -->(tgt: MultiInputStep[T, R]): tgt.type = to(tgt)
   }
 
-  implicit class CSource3[T, R <: FlowRuntime](val tuple: Product3[CSrc[T, R], CSrc[T, R], CSrc[T, R]]) extends AnyVal {
+  implicit class CSource3[T, R <: FlowRuntime](val tuple: Product3[_, _, _]) extends AnyVal {
     def to(tgt: MultiInputStep[T, R]): tgt.type = {
-      (tuple._1, tuple._2) to tgt
-      tuple._3 to tgt.in(2)
+      //(tuple._1.asInstanceOf[CSrc[T, R]], tuple._2.asInstanceOf[CSrc[T, R]]) to tgt
+      tuple._1.asInstanceOf[CSrc[T, R]] to tgt.in(0)
+      tuple._2.asInstanceOf[CSrc[T, R]] to tgt.in(1)
+      tuple._3.asInstanceOf[CSrc[T, R]] to tgt.in(2)
       tgt
     }
     def -->(tgt: MultiInputStep[T, R]): tgt.type = to(tgt)

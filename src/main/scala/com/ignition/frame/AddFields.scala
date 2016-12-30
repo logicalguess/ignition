@@ -18,7 +18,7 @@ import com.ignition.util.XmlUtils.{ RichNodeSeq, stringToText }
  *
  * @author Vlad Orzhekhovskiy
  */
-case class AddFields(fields: Iterable[(String, Any)]) extends FrameTransformer {
+case class AddFields(fields: Iterable[(String, Any)]) /*extends FrameTransformer*/ {
   import AddFields._
 
   def add(name: String, value: Any) = copy(fields = this.fields.toSeq :+ (name -> value))
@@ -28,7 +28,7 @@ case class AddFields(fields: Iterable[(String, Any)]) extends FrameTransformer {
   def %(tuple: (String, Any)) = add(tuple)
   
   protected def compute(arg: DataFrame)(implicit runtime: SparkRuntime): DataFrame = {
-    val df = optLimit(arg, runtime.previewMode)
+    val df = arg //optLimit(arg, runtime.previewMode)
 
     def column(name: String, expr: Any) = lit(expr).as(name)
 
@@ -74,6 +74,9 @@ case class AddFields(fields: Iterable[(String, Any)]) extends FrameTransformer {
  */
 object AddFields {
   val tag = "add-fields"
+
+  implicit def AddFieldsToAddFieldsFrameTransformer(af: AddFields): FrameTransformer =
+    new AddFields(af.fields) with FrameTransformer
 
   def apply(fields: (String, Any)*): AddFields = apply(fields)
 

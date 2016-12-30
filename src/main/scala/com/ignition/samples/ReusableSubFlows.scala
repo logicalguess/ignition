@@ -49,10 +49,10 @@ object ReusableSubFlows extends App {
 
   // main data flow | uses all subflows defined above
   val flow = FrameFlow {
-    val abDebug = DebugOutput()
-    val jDebug0 = DebugOutput()
-    val jDebug1 = DebugOutput()
-    val jDebug2 = DebugOutput()
+    val abDebug: FrameTransformer = DebugOutput()
+    val jDebug0: FrameTransformer = DebugOutput()
+    val jDebug1: FrameTransformer = DebugOutput()
+    val jDebug2: FrameTransformer = DebugOutput()
 
     provider.out(0) --> multiplier --> abDebug
     (provider.out(1), provider.out(2)) --> joiner --> (jDebug0, jDebug1, jDebug2)

@@ -1,8 +1,8 @@
 package com.ignition.samples
 
-import com.ignition.{ CSource3, frame }
-import com.ignition.frame.{ FrameFlow, DataGrid, DebugOutput, TextFileOutput, Union }
-import com.ignition.types.{ RichStructType, date, fieldToRichStruct, int, string }
+import com.ignition.{CSource3, frame}
+import com.ignition.frame.{DataGrid, DebugOutput, FrameFlow, FrameTransformer, TextFileOutput, Union}
+import com.ignition.types.{RichStructType, date, fieldToRichStruct, int, string}
 
 object UnionFlow extends App {
 
@@ -24,11 +24,11 @@ object UnionFlow extends App {
 
     val union = Union()
 
-    val debug = DebugOutput()
+    val debug: FrameTransformer = DebugOutput()
 
     val csv = TextFileOutput("/tmp/union_output.csv", "name" -> "%-10s", "weight" -> "%6d", "dob" -> "%s")
 
-    (grid1, grid2, grid3) --> union --> debug
+    //(grid1, grid2, grid3) --> union --> debug
 
     union --> csv
 

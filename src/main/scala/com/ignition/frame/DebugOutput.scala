@@ -18,7 +18,7 @@ import com.ignition.types.TypeUtils
  */
 case class DebugOutput(names: Boolean = true, types: Boolean = false,
                        title: Option[String] = None, maxWidth: Option[Int] = Some(80))
-  extends FrameTransformer {
+  extends /*FrameTransformer*/ {
 
   import DebugOutput._
 
@@ -88,7 +88,7 @@ case class DebugOutput(names: Boolean = true, types: Boolean = false,
     arg
   }
 
-  override protected def buildSchema(index: Int)(implicit runtime: SparkRuntime): StructType = input.schema
+  //override protected def buildSchema(index: Int)(implicit runtime: SparkRuntime): StructType = input.schema
 
   def toXml: Elem =
     <node names={ names } types={ types } max-width={ maxWidth }>
@@ -128,7 +128,12 @@ case class DebugOutput(names: Boolean = true, types: Boolean = false,
 object DebugOutput {
   val tag = "debug-output"
 
-  def fromXml(xml: Node) = {
+  implicit def DebugOutputToDebugOutputFrameTransformer(dbg: DebugOutput): FrameTransformer =
+    new DebugOutput(dbg.names, dbg.types, dbg.title, dbg.maxWidth) with FrameTransformer {
+      override protected def buildSchema(index: Int)(implicit runtime: SparkRuntime): StructType = input.schema
+    }
+
+      def fromXml(xml: Node) = {
     val names = xml \ "@names" asBoolean
     val types = xml \ "@types" asBoolean
     val title = xml \ "title" getAsString

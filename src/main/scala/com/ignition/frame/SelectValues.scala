@@ -178,7 +178,7 @@ object SelectAction {
  *
  * @author Vlad Orzhekhovskiy
  */
-case class SelectValues(actions: Iterable[SelectAction]) extends FrameTransformer {
+case class SelectValues(actions: Iterable[SelectAction]) /*extends FrameTransformer*/ {
   import SelectValues._
   import SelectAction._
 
@@ -190,12 +190,12 @@ case class SelectValues(actions: Iterable[SelectAction]) extends FrameTransforme
   protected def compute(arg: DataFrame)(implicit runtime: SparkRuntime): DataFrame = {
     val actions = this.actions
 
-    val df = optLimit(arg, runtime.previewMode)
+    val df = arg //optLimit(arg, runtime.previewMode)
     actions.foldLeft(df)((frame, action) => action(frame))
   }
 
-  override protected def buildSchema(index: Int)(implicit runtime: SparkRuntime): StructType =
-    actions.foldLeft(input.schema)((schema, action) => action(schema))
+//  override protected def buildSchema(index: Int)(implicit runtime: SparkRuntime): StructType =
+//    actions.foldLeft(input.schema)((schema, action) => action(schema))
 
   def toXml: Elem = <node>{ actions map (_.toXml) }</node>.copy(label = tag)
 
@@ -207,6 +207,12 @@ case class SelectValues(actions: Iterable[SelectAction]) extends FrameTransforme
  */
 object SelectValues {
   val tag = "select-values"
+
+  implicit def SelectValuesToSelectValuesFrameTransformer(select: SelectValues): FrameTransformer =
+    new SelectValues(select.actions) with FrameTransformer {
+      override protected def buildSchema(index: Int)(implicit runtime: SparkRuntime): StructType =
+        actions.foldLeft(input.schema)((schema, action) => action(schema))
+    }
 
   def apply(actions: SelectAction*): SelectValues = apply(actions.toSeq)
 

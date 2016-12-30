@@ -27,7 +27,7 @@ private[ignition] class LazyArray[A: ClassTag](builder: Int => A)(val length: In
 /**
  * Provides base step functionality and controls serializability of the steps.
  */
-abstract class AbstractStep extends Serializable {
+trait AbstractStep extends Serializable {
   /**
    * Wraps exceptions into ExecutionException instances.
    */
@@ -281,29 +281,29 @@ trait MultiOutputStep[T, R <: FlowRuntime] extends Step[T, R] { self =>
 }
 
 /* templates */
-abstract class Producer[T, R <: FlowRuntime] extends SingleOutputStep[T, R] with NoInputStep[T, R] {
+trait Producer[T, R <: FlowRuntime] extends SingleOutputStep[T, R] with NoInputStep[T, R] {
   protected def compute(index: Int)(implicit runtime: R): T = compute
   protected def compute(implicit runtime: R): T
 }
 
-abstract class Transformer[T, R <: FlowRuntime] extends SingleOutputStep[T, R] with SingleInputStep[T, R] {
+trait Transformer[T, R <: FlowRuntime] extends SingleOutputStep[T, R] with SingleInputStep[T, R] {
   override val step = this
   override val index = 0
   protected def compute(index: Int)(implicit runtime: R): T = compute(input)
   protected def compute(arg: T)(implicit runtime: R): T
 }
 
-abstract class Splitter[T, R <: FlowRuntime] extends SingleInputStep[T, R] with MultiOutputStep[T, R] {
+trait Splitter[T, R <: FlowRuntime] extends SingleInputStep[T, R] with MultiOutputStep[T, R] {
   protected def compute(index: Int)(implicit runtime: R): T = compute(input, index)
   protected def compute(arg: T, index: Int)(implicit runtime: R): T
 }
 
-abstract class Merger[T, R <: FlowRuntime] extends MultiInputStep[T, R] with SingleOutputStep[T, R] {
+trait Merger[T, R <: FlowRuntime] extends MultiInputStep[T, R] with SingleOutputStep[T, R] {
   protected def compute(index: Int)(implicit runtime: R): T = compute(inputs)
   protected def compute(args: IndexedSeq[T])(implicit runtime: R): T
 }
 
-abstract class Module[T, R <: FlowRuntime] extends MultiInputStep[T, R] with MultiOutputStep[T, R] {
+trait Module[T, R <: FlowRuntime] extends MultiInputStep[T, R] with MultiOutputStep[T, R] {
   protected def compute(index: Int)(implicit runtime: R): T = compute(inputs, index)
   protected def compute(args: IndexedSeq[T], index: Int)(implicit runtime: R): T
 }

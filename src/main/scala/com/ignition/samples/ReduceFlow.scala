@@ -1,8 +1,8 @@
 package com.ignition.samples
 
 import com.ignition.frame
-import com.ignition.frame.{ FrameFlow, DataGrid, DebugOutput, Reduce }
-import com.ignition.types.{ RichStructType, fieldToRichStruct, int, string }
+import com.ignition.frame.{DataGrid, DebugOutput, FrameFlow, FrameTransformer, Reduce}
+import com.ignition.types.{RichStructType, fieldToRichStruct, int, string}
 
 object ReduceFlow extends App {
   import frame.ReduceOp._
@@ -30,7 +30,7 @@ object ReduceFlow extends App {
     val allByIdHour = Reduce("task" -> CONCAT, "points" -> SUM) groupBy ("id", "hour")
     val ptsByTask = Reduce("points" -> SUM) groupBy ("task")
 
-    val (debug1, debug2, debug3, debug4) = (DebugOutput(), DebugOutput(), DebugOutput(), DebugOutput())
+    val (debug1: FrameTransformer, debug2: FrameTransformer, debug3: FrameTransformer, debug4: FrameTransformer) = (DebugOutput(), DebugOutput(), DebugOutput(), DebugOutput())
 
     grid --> sumPtsByIdHour --> debug1
     grid --> maxPtsByIdTask --> debug2

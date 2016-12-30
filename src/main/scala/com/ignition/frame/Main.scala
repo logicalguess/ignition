@@ -8,7 +8,7 @@ import scala.xml.XML
 import org.json4s.jackson.JsonMethods.parse
 import org.json4s.string2JsonInput
 
-import com.ignition.{ BuildInfo, SparkHelper }
+import com.ignition.SparkHelper
 
 /**
  * The entry point for starting ignition frame flows.
@@ -23,7 +23,7 @@ object Main {
 
   /* build command line parser */
   val parser = new scopt.OptionParser[FrameFlowConfig]("FrameFlowRunner") {
-    head(BuildInfo.name, BuildInfo.version)
+    //head(BuildInfo.name, BuildInfo.version)
     note("This program runs a single frameflow.\n")
 
     opt[String]("type") optional () valueName ("json|xml") action { (x, c) =>

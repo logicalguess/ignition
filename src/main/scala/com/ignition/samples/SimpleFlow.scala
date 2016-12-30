@@ -35,9 +35,9 @@ object SimpleFlow extends App {
 
     val selectA = SelectValues() rename ("mean" -> "average") retype ("average" -> "int")
 
-    val debugA = DebugOutput()
+    val debugA: FrameTransformer = DebugOutput()
 
-    (grid1, grid2) --> queryA --> selectA --> debugA
+    //(grid1, grid2) --> queryA --> selectA --> debugA
 
     // second pipeline
 
@@ -46,7 +46,7 @@ object SimpleFlow extends App {
     val statsB = BasicStats() groupBy "name" add ("weight", AVG, MAX, COUNT_DISTINCT)
     statsB addStepListener listener
 
-    val debugB = DebugOutput()
+    val debugB: FrameTransformer = DebugOutput()
     
     grid1 --> queryB --> statsB --> debugB
 

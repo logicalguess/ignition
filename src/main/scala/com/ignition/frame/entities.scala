@@ -67,9 +67,9 @@ object FrameStep {
 
 /* step templates */
 
-abstract class FrameProducer extends Producer[DataFrame, SparkRuntime] with FrameStep
+trait FrameProducer extends Producer[DataFrame, SparkRuntime] with FrameStep
 
-abstract class FrameTransformer extends Transformer[DataFrame, SparkRuntime] with FrameStep
+trait FrameTransformer extends Transformer[DataFrame, SparkRuntime] with FrameStep
 
 abstract class FrameSplitter(val outputCount: Int) extends Splitter[DataFrame, SparkRuntime] with FrameStep
 

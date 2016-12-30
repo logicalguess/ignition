@@ -1,24 +1,24 @@
 package com.ignition.frame
 
-import scala.xml.{ Elem, Node }
-import scala.xml.NodeSeq.seqToNodeSeq
+import com.ignition.{AbstractStep, ConnectionSource, Producer}
 
-import org.apache.spark.sql.{ DataFrame, Row }
-import org.apache.spark.sql.types.{ StructField, StructType }
+import scala.xml.{Elem, Node}
+import scala.xml.NodeSeq.seqToNodeSeq
+import org.apache.spark.sql.{DataFrame, Row}
+import org.apache.spark.sql.types.{StructField, StructType}
 import org.json4s.JValue
 import org.json4s.JsonDSL._
 import org.json4s.jvalue2monadic
-
 import com.ignition.types.TypeUtils._
 import com.ignition.util.JsonUtils.RichJValue
-import com.ignition.util.XmlUtils.{ RichNodeSeq, booleanToText }
+import com.ignition.util.XmlUtils.{RichNodeSeq, booleanToText}
 
 /**
  * Static data grid input.
  *
  * @author Vlad Orzhekhovskiy
  */
-case class DataGrid(schema: StructType, rows: Seq[Row]) extends FrameProducer {
+case class DataGrid(schema: StructType, rows: Seq[Row]) /*extends FrameProducer */{
   import DataGrid._
 
   validate
@@ -31,11 +31,11 @@ case class DataGrid(schema: StructType, rows: Seq[Row]) extends FrameProducer {
 
   protected def compute(implicit runtime: SparkRuntime): DataFrame = {
     val data = if (runtime.previewMode) rows.take(FrameStep.previewSize) else rows
-    val rdd = ctx.sparkContext.parallelize(data)
-    ctx.createDataFrame(rdd, schema)
+    val rdd = runtime.ctx.sparkContext.parallelize(data)
+    runtime.ctx.createDataFrame(rdd, schema)
   }
 
-  override protected def buildSchema(index: Int)(implicit runtime: SparkRuntime): StructType = schema
+  //override protected def buildSchema(index: Int)(implicit runtime: SparkRuntime): StructType = schema
 
   def toXml: Elem =
     <node>
@@ -81,6 +81,11 @@ case class DataGrid(schema: StructType, rows: Seq[Row]) extends FrameProducer {
  */
 object DataGrid {
   val tag = "datagrid"
+
+  implicit def DataGridToFrameProducer(grid: DataGrid): FrameProducer =
+    new DataGrid(grid.schema, grid.rows) with FrameProducer {
+      override protected def buildSchema(index: Int)(implicit runtime: SparkRuntime): StructType = schema
+    }
 
   def apply(schema: StructType): DataGrid = apply(schema, Nil)
 

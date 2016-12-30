@@ -10,7 +10,7 @@ import org.apache.spark.streaming.Milliseconds
 import org.json4s.jackson.JsonMethods.parse
 import org.json4s.string2JsonInput
 
-import com.ignition.{ BuildInfo, SparkHelper }
+import com.ignition.SparkHelper
 import com.ignition.util.ConfigUtils
 
 /**
@@ -29,7 +29,7 @@ object Main {
 
   /* build command line parser */
   val parser = new scopt.OptionParser[StreamFlowConfig]("StreamFlowRunner") {
-    head(BuildInfo.name, BuildInfo.version)
+    //head(BuildInfo.name, BuildInfo.version)
     note("This program runs a single streamflow.\n")
 
     opt[String]("type") optional () valueName ("json|xml") action { (x, c) =>
