@@ -11,16 +11,16 @@ object Flow1 extends App {
 
   def createFlow(grid: DataGrid): FrameFlow = FrameFlow {
 
-    val debugA: FrameTransformer = DebugOutput()
-    grid --> debugA
+    val debugA = DebugOutput()
+    val a = grid --> debugA
 
     val formula = Formula("millenial" -> "YEAR(dob) >= 1982".mvel)
     val select = SelectValues() retain ("name", "weight", "millenial")
     val af = AddFields("predictor" -> "")
-    val debugB: FrameTransformer = DebugOutput()
-    grid --> formula --> select --> af --> debugB
+    val debugB = DebugOutput()
+    val b = grid --> formula --> select --> af --> debugB
 
-    (debugA, debugB)
+    (a, b)
   }
 
   println(createFlow(grid).toXml)

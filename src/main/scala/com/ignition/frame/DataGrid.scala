@@ -1,7 +1,5 @@
 package com.ignition.frame
 
-import com.ignition.{AbstractStep, ConnectionSource, Producer}
-
 import scala.xml.{Elem, Node}
 import scala.xml.NodeSeq.seqToNodeSeq
 import org.apache.spark.sql.{DataFrame, Row}

@@ -1,13 +1,14 @@
 package com.ignition.frame
 
-import scala.xml.{ Elem, Node }
+import scala.xml.{Elem, Node}
 import org.json4s.JValue
 import org.json4s.JsonDSL._
 import org.json4s.jvalue2monadic
 import org.apache.spark.sql._
 import org.apache.spark.sql.types._
-import com.ignition.util.XmlUtils.{ RichNodeSeq, booleanToText, intToText, optToOptText }
+import com.ignition.util.XmlUtils.{RichNodeSeq, booleanToText, intToText, optToOptText}
 import com.ignition.util.JsonUtils._
+
 import scala.annotation.tailrec
 import com.ignition.types.TypeUtils
 
@@ -134,13 +135,13 @@ object DebugOutput {
     }
 
       def fromXml(xml: Node) = {
-    val names = xml \ "@names" asBoolean
-    val types = xml \ "@types" asBoolean
-    val title = xml \ "title" getAsString
-    val maxWidth = xml \ "@max-width" getAsInt
+        val names = xml \ "@names" asBoolean
+        val types = xml \ "@types" asBoolean
+        val title = xml \ "title" getAsString
+        val maxWidth = xml \ "@max-width" getAsInt
 
-    apply(names, types, title, maxWidth)
-  }
+        apply(names, types, title, maxWidth)
+      }
 
   def fromJson(json: JValue) = {
     val names = json \ "names" asBoolean
