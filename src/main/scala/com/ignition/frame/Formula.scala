@@ -18,14 +18,14 @@ import com.ignition.util.XmlUtils.RichNodeSeq
  *
  * @author Vlad Orzhekhovskiy
  */
-case class Formula(fields: Iterable[(String, RowExpression[_ <: DataType])]) extends FrameTransformer {
+case class Formula(fields: Iterable[(String, RowExpression[_ <: DataType])]) /*extends FrameTransformer*/ {
   import Formula._
 
   def addField(name: String, expr: RowExpression[_ <: DataType]) = copy(fields = fields.toSeq :+ (name -> expr))
   def %(name: String, expr: RowExpression[_ <: DataType]) = addField(name, expr)
 
   protected def compute(arg: DataFrame)(implicit runtime: SparkRuntime): DataFrame = {
-    val df = optLimit(arg, runtime.previewMode)
+    val df = arg //optLimit(arg, runtime.previewMode)
 
     val executors = fields map {
       case (_, expr) => expr.evaluate(df.schema) _
@@ -35,21 +35,18 @@ case class Formula(fields: Iterable[(String, RowExpression[_ <: DataType])]) ext
       val computed = executors map (_(row))
       Row.fromSeq(row.toSeq ++ computed)
     }
-    ctx.createDataFrame(rdd, computeSchema)
-  }
-  
-  override protected def buildSchema(index: Int)(implicit runtime: SparkRuntime): StructType = computeSchema
 
-  private def computeSchema(implicit runtime: SparkRuntime): StructType = {
-    val df = input
     val inSchema = df.schema
     val newFields = fields map {
       case (name, expr) =>
         val targetType = expr.targetType getOrElse expr.computeTargetType(inSchema)(df.first)
         StructField(name, targetType, true)
     }
-    StructType(inSchema ++ newFields)
+
+    runtime.ctx.createDataFrame(rdd, StructType(inSchema ++ newFields))
   }
+  
+  //override protected def buildSchema(index: Int)(implicit runtime: SparkRuntime): StructType = computeSchema
 
   def toXml: Elem =
     <node>{ fields map (f => <field name={ f._1 }>{ f._2.toXml }</field>) }</node>.copy(label = tag)
@@ -65,6 +62,20 @@ case class Formula(fields: Iterable[(String, RowExpression[_ <: DataType])]) ext
  */
 object Formula {
   val tag = "formula"
+
+  implicit def FormulaToFormulaFrameTransformer(f: Formula): FrameTransformer =
+    new Formula(f.fields) with FrameTransformer {
+      override protected def buildSchema(index: Int)(implicit runtime: SparkRuntime): StructType = {
+        val df = input
+        val inSchema = df.schema
+        val newFields = fields map {
+          case (name, expr) =>
+            val targetType = expr.targetType getOrElse expr.computeTargetType(inSchema)(df.first)
+            StructField(name, targetType, true)
+        }
+        StructType(inSchema ++ newFields)
+      }
+    }
 
   def apply(fields: (String, RowExpression[_ <: DataType])*): Formula = apply(fields)
 
