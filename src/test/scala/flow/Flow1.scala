@@ -31,5 +31,5 @@ object Flow1 extends App {
     .addRow(newid, "jake", 160, javaDate(1974, 11, 3))
     .addRow(newid, "josh", 120, javaDate(1995, 1, 10))
 
-  frame.Main.runFrameFlow(createFlow(grid))
+  Main.runFrameFlow(createFlow(grid))
 }
