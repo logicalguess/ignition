@@ -19,7 +19,7 @@ class FrameFlowSpec extends FrameFlowSpecification {
     ("jane", 1, 46.0), ("jake", 4, 62.0), ("john", 3, 94.0))
   val sql = SQLQuery("SELECT name, AVG(score) as score FROM input1 GROUP BY name")
   val select = SelectValues() rename ("score" -> "avg_score")
-  val stats = BasicStats() groupBy "name" add ("item", BasicAggregator.COUNT)
+  val stats: FrameTransformer = BasicStats() groupBy "name" add ("item", BasicAggregator.COUNT)
   val filter = Filter($"avg_score" > 65)
 
   val flow = FrameFlow {

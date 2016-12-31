@@ -21,7 +21,7 @@ import com.ignition.util.JsonUtils.RichJValue
  *
  * @author Vlad Orzhekhovskiy
  */
-case class QueueInput(schema: StructType, data: Seq[Seq[Row]] = Nil) extends StreamProducer {
+case class QueueInput(schema: StructType, data: Seq[Seq[Row]] = Nil) /*extends StreamProducer*/ {
   import QueueInput._
 
   val dataWithSchema = data map { rows =>
@@ -41,10 +41,10 @@ case class QueueInput(schema: StructType, data: Seq[Seq[Row]] = Nil) extends Str
   }
 
   protected def compute(implicit runtime: SparkStreamingRuntime): DataStream = {
-    val rdds = dataWithSchema map (sc.parallelize(_))
+    val rdds = dataWithSchema map (runtime.sc.parallelize(_))
 
     val queue = Queue(rdds: _*)
-    ssc.queueStream(queue, true)
+    runtime.ssc.queueStream(queue, true)
   }
 
   def toXml: Elem =
@@ -76,6 +76,9 @@ case class QueueInput(schema: StructType, data: Seq[Seq[Row]] = Nil) extends Str
  */
 object QueueInput {
   val tag = "stream-queue-input"
+
+  implicit def QueueInputToQueueInputStreamproducer(q: QueueInput): StreamProducer =
+    new QueueInput(q.schema) with StreamProducer
 
   def fromXml(xml: Node) = {
     val schema = DataGrid.xmlToSchema((xml \ "schema").head)

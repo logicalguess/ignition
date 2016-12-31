@@ -12,8 +12,10 @@ import org.json4s.JsonDSL.{ pair2jvalue, string2jvalue }
  *
  * @author Vlad Orzhekhovskiy
  */
-case class Union() extends FrameMerger(Union.MAX_INPUTS) {
+case class Union() extends FrameMerger/*(Union.MAX_INPUTS)*/ {
   import Union._
+
+  override def inputCount: Int = Union.MAX_INPUTS
 
   override val allInputsRequired = false
 

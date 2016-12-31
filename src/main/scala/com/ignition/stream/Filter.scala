@@ -15,8 +15,10 @@ import com.ignition.util.XmlUtils.RichNodeSeq
  *
  * @author Vlad Orzhekhovskiy
  */
-case class Filter(condition: String) extends StreamSplitter(2) {
+case class Filter(condition: String) extends StreamSplitter/*(2)*/ {
   import Filter._
+
+  def outputCount: Int = 2
 
   protected def compute(arg: DataStream, index: Int)(implicit runtime: SparkStreamingRuntime): DataStream = {
 

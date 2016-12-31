@@ -17,10 +17,10 @@ import com.ignition.util.XmlUtils.RichNodeSeq
  *
  * @author Vlad Orzhekhovskiy
  */
-case class SQLQuery(query: String) extends FrameMerger(SQLQuery.MAX_INPUTS) {
+case class SQLQuery(query: String) /*extends FrameMerger(SQLQuery.MAX_INPUTS)*/ {
   import SQLQuery._
 
-  override val allInputsRequired = false
+  //override val allInputsRequired = false
 
   protected def compute(args: IndexedSeq[DataFrame])(implicit runtime: SparkRuntime): DataFrame = {
     assert(args.exists(_ != null), "No connected inputs")
@@ -32,8 +32,8 @@ case class SQLQuery(query: String) extends FrameMerger(SQLQuery.MAX_INPUTS) {
 
     val query = injectGlobals(this.query)
 
-    val df = ctx.sql(query)
-    optLimit(df, runtime.previewMode)
+    val df = runtime.ctx.sql(query)
+    df //optLimit(df, runtime.previewMode)
   }
 
   def toXml: Elem = <node>{ query }</node>.copy(label = tag)
@@ -46,6 +46,12 @@ case class SQLQuery(query: String) extends FrameMerger(SQLQuery.MAX_INPUTS) {
  */
 object SQLQuery {
   val tag = "sql"
+
+  implicit def SQLQueryToFrameMerger(q: SQLQuery): FrameMerger =
+    new SQLQuery(q.query) with FrameMerger {
+      override def inputCount: Int = SQLQuery.MAX_INPUTS
+      override val allInputsRequired = false
+    }
 
   val MAX_INPUTS = 10
 

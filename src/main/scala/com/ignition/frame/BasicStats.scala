@@ -41,7 +41,7 @@ import BasicAggregator._
  * @author Vlad Orzhekhovskiy
  */
 case class BasicStats(dataFields: Iterable[(String, BasicAggregator)],
-                      groupFields: Iterable[String] = Nil) extends FrameTransformer {
+                      groupFields: Iterable[String] = Nil) /*extends FrameTransformer*/ {
 
   import BasicStats._
 
@@ -54,7 +54,7 @@ case class BasicStats(dataFields: Iterable[(String, BasicAggregator)],
   def groupBy(fields: String*) = copy(groupFields = fields)
 
   protected def compute(arg: DataFrame)(implicit runtime: SparkRuntime): DataFrame = {
-    val df = optLimit(arg, runtime.previewMode)
+    val df = arg //optLimit(arg, runtime.previewMode)
 
     val groupColumns = groupFields map df.col toSeq
     val aggrColumns = dataFields map {
@@ -91,6 +91,9 @@ case class BasicStats(dataFields: Iterable[(String, BasicAggregator)],
  */
 object BasicStats {
   val tag = "basic-stats"
+
+  implicit def BasicStatsToFrameTransformer(bs: BasicStats): FrameTransformer =
+    new BasicStats(bs.dataFields, bs.groupFields) with FrameTransformer
 
   def apply(dataFields: (String, BasicAggregator)*): BasicStats = apply(dataFields)
 

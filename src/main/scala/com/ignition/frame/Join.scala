@@ -34,8 +34,10 @@ object JoinType extends Enumeration {
  *
  * @author Vlad Orzhekhovskiy
  */
-case class Join(condition: Option[String], joinType: JoinType) extends FrameMerger(2) {
+case class Join(condition: Option[String], joinType: JoinType) extends FrameMerger/*(2)*/ {
   import Join._
+
+  override def inputCount: Int = 2
 
   def joinType(jt: JoinType) = copy(joinType = jt)
 

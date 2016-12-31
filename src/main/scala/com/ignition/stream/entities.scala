@@ -85,12 +85,17 @@ trait StreamStep extends Step[DataStream, SparkStreamingRuntime] {
 
 /* step templates */
 
-abstract class StreamProducer extends Producer[DataStream, SparkStreamingRuntime] with StreamStep
+trait StreamProducer extends Producer[DataStream, SparkStreamingRuntime] with StreamStep
 
 abstract class StreamTransformer extends Transformer[DataStream, SparkStreamingRuntime] with StreamStep
 
-abstract class StreamSplitter(val outputCount: Int)
-  extends Splitter[DataStream, SparkStreamingRuntime] with StreamStep
+//abstract class StreamSplitter(val outputCount: Int)
+//  extends Splitter[DataStream, SparkStreamingRuntime] with StreamStep
+
+trait StreamSplitter
+  extends Splitter[DataStream, SparkStreamingRuntime] with StreamStep {
+  def outputCount: Int
+}
 
 abstract class StreamMerger(val inputCount: Int)
   extends Merger[DataStream, SparkStreamingRuntime] with StreamStep

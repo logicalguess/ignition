@@ -73,7 +73,11 @@ trait FrameTransformer extends Transformer[DataFrame, SparkRuntime] with FrameSt
 
 abstract class FrameSplitter(val outputCount: Int) extends Splitter[DataFrame, SparkRuntime] with FrameStep
 
-abstract class FrameMerger(val inputCount: Int) extends Merger[DataFrame, SparkRuntime] with FrameStep
+//abstract class FrameMerger(val inputCount: Int) extends Merger[DataFrame, SparkRuntime] with FrameStep
+trait FrameMerger extends Merger[DataFrame, SparkRuntime] with FrameStep {
+  def inputCount: Int
+}
+
 
 abstract class FrameModule(val inputCount: Int, val outputCount: Int) extends Module[DataFrame, SparkRuntime] with FrameStep
 

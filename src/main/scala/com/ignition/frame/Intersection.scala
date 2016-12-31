@@ -13,8 +13,10 @@ import org.json4s.JsonDSL.{ pair2jvalue, string2jvalue }
  *
  * @author Vlad Orzhekhovskiy
  */
-case class Intersection() extends FrameMerger(Intersection.MAX_INPUTS) {
+case class Intersection() extends FrameMerger/*(Intersection.MAX_INPUTS)*/ {
   import Intersection._
+
+  override def inputCount: Int = Intersection.MAX_INPUTS
 
   override val allInputsRequired = false
 

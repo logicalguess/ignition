@@ -19,8 +19,10 @@ import com.ignition.ins
  * @author Vlad Orzhekhovskiy
  */
 case class Foreach(flow: Step[DataFrame, SparkRuntime])
-    extends StreamSplitter(flow.outputCount) {
+    extends StreamSplitter/*(flow.outputCount)*/ {
   import Foreach._
+
+  def outputCount: Int = flow.outputCount
 
   protected def compute(arg: DataStream, index: Int)(implicit runtime: SparkStreamingRuntime): DataStream = {
     val flow = this.flow
