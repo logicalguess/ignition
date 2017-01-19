@@ -41,19 +41,24 @@ object Flow1SparkPipeline extends App {
   val select: FrameTransformer = SelectValues() retain ("name", "weight", "millenial")
   val af: FrameTransformer = AddFields("predictor" -> "")
 
-  grid --> formula --> select --> af --> debug
+  val transformer = grid --> formula --> select --> af --> debug
 
-  val dt: FrameTransformer = debug
+  // run with ignition
+  Main.runFrameFlow(FrameFlow { transformer })
 
-  val pipeline = new Pipeline()
-    .setStages(Array(formula, select, af, debug))
 
+  //run with Spark Pipeline
   implicit protected val sc: SparkContext = SparkHelper.sparkContext
   implicit protected val ctx: SQLContext = SparkHelper.sqlContext
   implicit protected val runtime = new DefaultSparkRuntime(ctx)
+
+
+  val pipeline = new Pipeline()
+    .setStages(Array(formula, select, af, debug))
 
   println(pipeline.transformSchema(grid.schema))
 
   val model = pipeline.fit(DataGrid(new StructType()).value)
   model.transform(grid.value)
+
 }
