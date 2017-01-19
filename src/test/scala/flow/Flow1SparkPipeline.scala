@@ -55,5 +55,5 @@ object Flow1SparkPipeline extends App {
   println(pipeline.transformSchema(grid.schema))
 
   val model = pipeline.fit(DataGrid(new StructType()).value)
-  println(model.transform(grid.value))
+  model.transform(grid.value)
 }
