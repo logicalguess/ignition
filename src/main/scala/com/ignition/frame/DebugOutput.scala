@@ -1,5 +1,7 @@
 package com.ignition.frame
 
+import com.ignition.SparkHelper
+
 import scala.xml.{Elem, Node}
 import org.json4s.JValue
 import org.json4s.JsonDSL._
@@ -19,7 +21,7 @@ import com.ignition.types.TypeUtils
  */
 case class DebugOutput(names: Boolean = true, types: Boolean = false,
                        title: Option[String] = None, maxWidth: Option[Int] = Some(80))
-  extends /*FrameTransformer*/ {
+  /*extends FrameTransformer*/ {
 
   import DebugOutput._
 
@@ -32,7 +34,7 @@ case class DebugOutput(names: Boolean = true, types: Boolean = false,
   def maxWidth(width: Int): DebugOutput = copy(maxWidth = Some(width))
   def unlimitedWidth(): DebugOutput = copy(maxWidth = None)
 
-  protected def compute(arg: DataFrame)(implicit runtime: SparkRuntime): DataFrame = {
+  /*protected*/ def compute(arg: DataFrame)(implicit runtime: SparkRuntime): DataFrame = {
     val schema = arg.schema
     val data = if (runtime.previewMode) arg.take(FrameStep.previewSize) else arg.collect
 
@@ -134,7 +136,7 @@ object DebugOutput {
       override protected def buildSchema(index: Int)(implicit runtime: SparkRuntime): StructType = input.schema
     }
 
-      def fromXml(xml: Node) = {
+  def fromXml(xml: Node) = {
         val names = xml \ "@names" asBoolean
         val types = xml \ "@types" asBoolean
         val title = xml \ "title" getAsString

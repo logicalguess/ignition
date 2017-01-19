@@ -290,7 +290,7 @@ trait Transformer[T, R <: FlowRuntime] extends SingleOutputStep[T, R] with Singl
   override val step = this
   override val index = 0
   protected def compute(index: Int)(implicit runtime: R): T = compute(input)
-  protected def compute(arg: T)(implicit runtime: R): T
+  /*protected*/ def compute(arg: T)(implicit runtime: R): T
 }
 
 trait Splitter[T, R <: FlowRuntime] extends SingleInputStep[T, R] with MultiOutputStep[T, R] {
